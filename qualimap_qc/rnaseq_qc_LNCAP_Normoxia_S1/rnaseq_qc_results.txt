@@ -1,0 +1,55 @@
+RNA-Seq QC report
+-----------------------------------
+
+>>>>>>> Input
+
+    bam file = /home/sanchan_chandrasheka/bulkrnaseq_analysis/scripts/LNCAP_Normoxia_S1.bam
+    gff file = /home/sanchan_chandrasheka/bulkrnaseq_analysis/reference/Homo_sapiens.GRCh38.114.gtf
+    counting algorithm = uniquely-mapped-reads
+    protocol = non-strand-specific
+
+
+>>>>>>> Reads alignment
+
+    reads aligned  = 50,646,416
+    total alignments = 58,530,267
+    secondary alignments = 7,883,851
+    non-unique alignments = 12,481,526
+    aligned to genes  = 38,911,449
+    ambiguous alignments = 2,555,502
+    no feature assigned = 4,567,136
+    not aligned = 4,333,202
+    SSP estimation (fwd/rev) = 0.04 / 0.96
+
+
+>>>>>>> Reads genomic origin
+
+    exonic =  38,911,449 (89.5%)
+    intronic = 3,780,968 (8.7%)
+    intergenic = 786,168 (1.81%)
+    overlapping exon = 2,072,713 (4.77%)
+    rRNA = 0 (0%)
+
+
+>>>>>>> Transcript coverage profile
+
+    5' bias = 0.41
+    3' bias = 0.34
+    5'-3' bias = 1.05
+
+
+>>>>>>> Junction analysis
+
+    reads at junctions = 11,083,344
+
+    ACCT : 5.06%
+    AGGT : 4.47%
+    AGGA : 4.02%
+    TCCT : 3.79%
+    ATCT : 3.34%
+    AGCT : 2.73%
+    GCCT : 2.52%
+    AGGC : 2.52%
+    AGGG : 2.46%
+    AGAT : 2.33%
+    TTCT : 2.1%
