@@ -35,12 +35,13 @@ Note: Each biological sample is split into multiple technical runs (SRR IDs). We
 ```
 # Download SRA
 prefetch SRR7179504
-<img width="928" height="228" alt="Screenshot 2025-10-22 171653" src="https://github.com/user-attachments/assets/436e4fdb-653a-4bb2-8ac0-673455518355" />
 
 # Convert to FASTQ
 fastq-dump --outdir fastq --gzip --skip-technical --readids \
 --read-filter pass --dumpbase --split-3 --clip SRR7179504/SRR7179504.sra
 ```
+<img width="928" height="228" alt="Screenshot 2025-10-22 171653" src="https://github.com/user-attachments/assets/b57e5476-e08a-4490-bd7d-37efc96a7e4f" />
+
 2️⃣ Quality Control (QC)
 
 Check sequencing quality using FastQC and summarize with MultiQC:
