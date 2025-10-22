@@ -114,7 +114,7 @@ qualimap rnaseq -bam alignedreads/LNCAP_Hypoxia_S1.bam \
   -outdir rnaseq_qc_results --java-mem-size=8G
 ```
 Output: QC reports for aligned reads  
-<img width="1466" height="85" alt="Screenshot 2025-10-22 172818" src="https://github.com/user-attachments/assets/7a3c4c4e-de55-4e43-a339-fd8a49ffa670" />
+<img width="1200" height="85" alt="Screenshot 2025-10-22 172818" src="https://github.com/user-attachments/assets/7a3c4c4e-de55-4e43-a339-fd8a49ffa670" />
 
 ### 9️⃣ Differential Expression Analysis (DESeq2)  
  Complete step by step guide is provided below 
@@ -155,7 +155,7 @@ condition <- c(rep("LNCAP_Hypoxia", 2), rep("LNCAP_Normoxia", 2),
 my_colData <- as.data.frame(condition)
 rownames(my_colData) <- colnames(data)
 ```
-<img width="797" height="110" alt="Screenshot 2025-10-22 174924" src="https://github.com/user-attachments/assets/d95580cc-4fbd-449c-b9b7-dd06923283e0" />
+<img width="398" height="55" alt="Screenshot 2025-10-22 174924" src="https://github.com/user-attachments/assets/d95580cc-4fbd-449c-b9b7-dd06923283e0" />
 
 ---
 
@@ -177,7 +177,7 @@ my_colData
 
 Expected output:
 
-<img width="589" height="290" alt="Screenshot 2025-10-22 175345" src="https://github.com/user-attachments/assets/b2288ff1-cc8c-41a3-92dc-c573232a98ce" />
+<img width="294.5" height="145" alt="Screenshot 2025-10-22 175345" src="https://github.com/user-attachments/assets/b2288ff1-cc8c-41a3-92dc-c573232a98ce" />
 
 ---
 
@@ -215,7 +215,7 @@ ddS
 
 Expected output includes:
 
-<img width="787" height="240" alt="Screenshot 2025-10-22 175640" src="https://github.com/user-attachments/assets/d03c38d6-426a-422d-991b-d6efc6a3be67" />
+<img width="393.5" height="120" alt="Screenshot 2025-10-22 175640" src="https://github.com/user-attachments/assets/d03c38d6-426a-422d-991b-d6efc6a3be67" />
 
 
 ---
