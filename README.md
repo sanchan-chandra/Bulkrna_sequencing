@@ -121,9 +121,8 @@ Output: QC reports for aligned reads
  
 
 # 🧬 Bulk RNA-seq Differential Expression Analysis (DESeq2)
-A complete workflow for **bulk RNA-seq differential gene expression analysis** using **DESeq2**   
 
-## ⚙️ Installation , Load Data and Packages
+## 1.⚙️ Installation , Load Data and Packages
 
 Install all dependencies via Bioconductor and CRAN:
 
@@ -161,7 +160,7 @@ rownames(my_colData) <- colnames(data)
 ---
 
 
-## Create DESeq2 Object and Run Normalization
+## 2.Create DESeq2 Object and Run Normalization
 
 Define the biological replicates for each condition:
 
@@ -244,7 +243,7 @@ This CSV can be used for downstream analysis, visualization, or sharing with col
 
 
 
-## 🧩 Gene Annotation
+## 3.🧩 Gene Annotation
 ###   🔧 Download Gene Annotations from Ensembl BioMart  
 1. Go to [Ensembl BioMart](http://uswest.ensembl.org/biomart/martview/).  
 2. Select **Database:** Ensembl Genes 99, **Dataset:** Human genes (GRCh38.p13).  
@@ -276,7 +275,7 @@ write.csv(annotated_data, "gene_annotated_normalized_counts.csv", row.names = FA
 
 ---
 
-## **Visualizing Sample Variability** 📊
+## 4.**Visualizing Sample Variability** 📊
 
 We assess sample-to-sample variability to identify outliers and check experiment quality.
 
@@ -375,7 +374,7 @@ plot_PCA(vsd, output_file="/home/sanchan_chandrasheka/bulkrnaseq_analysis/deseq2
 > Visualizes sample similarity in 2D; replicates cluster together.
 
 
-##  Extract DE results
+##  5. Extract DE results
 To extract the differentially expressed genes from the DESeq2 object, we will use the results() function:
 ```
 res <- results(dds, contrast = c("condition", "LNCAP_Hypoxia", "LNCAP_Normoxia"))
@@ -524,7 +523,7 @@ compare_significant_genes <- function(res1, res2, padj_cutoff = 0.0001, ngenes =
 ---
 
 
-# **Gene Set Enrichment Analysis (GSEA) of LNCaP Hypoxia RNA-seq**
+# 6. **Gene Set Enrichment Analysis (GSEA) of LNCaP Hypoxia RNA-seq**
 
 ---
  **1. Load HALLMARK Pathways**
