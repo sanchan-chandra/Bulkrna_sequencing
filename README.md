@@ -423,7 +423,7 @@ Here’s a full example you can put in your README:
 
 ---
 
-## 1️⃣ Volcano Plot
+### 1️⃣ Volcano Plot
 
 ```r
 # Load packages
@@ -472,7 +472,7 @@ plot_volcano(res, padj_cutoff = 0.0005, nlabel = 15, label.by = "padj")
 
 ---
 
-## 2️⃣ Log2 Fold Change Comparison Between Two Cell Lines
+### 2️⃣ Log2 Fold Change Comparison Between Two Cell Lines
 
 ```r
 # Load DE results for two comparisons
