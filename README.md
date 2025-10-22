@@ -16,10 +16,8 @@ For each cell line, we compared **Normoxia vs Hypoxia** to identify genes that r
 * **Description:** RNA-Seq and ChIP-Seq experiments in LNCaP and PC3 cells under normoxia and hypoxia conditions.
 * **Note:** Each biological sample is split across multiple technical runs (SRR IDs). In this analysis, 20 SRR files were merged into 8 final FASTQ files.
 
----
 
-
-## 🧬💻 Step-by-step guide with code
+# 🧬💻 Step-by-step Workflow
 ### 1️⃣ Data Acquisition  
 1.Download .sra files using SRA Toolkit   
 2.Convert .sra → .fastq.gz using fastq-dump 
