@@ -1,4 +1,4 @@
-# Bulk RNA-Seq Analysis – Hypoxia Response in LNCaP and PC3 Cell Lines
+# Bulk RNA-Seq Analysis
 
 🎯 Project Overview  
 This project demonstrates a complete Bulk RNA-Seq workflow, from raw sequencing data up to differential expression analysis using DESeq2.
