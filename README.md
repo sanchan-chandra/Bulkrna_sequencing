@@ -49,7 +49,10 @@ Check sequencing quality using FastQC and summarize with MultiQC:
 # Run FastQC
 mkdir -p fastqc_results
 fastqc fastq/*.fastq.gz -o fastqc_results/ --threads 8
+```
+<img width="1229" height="569" alt="Screenshot 2025-10-22 172214" src="https://github.com/user-attachments/assets/7e18d07c-7630-441f-9b1e-082062eef1f0" />
 
+```
 # Aggregate with MultiQC
 multiqc fastqc_results/ -o multiqc_report/
 ```
@@ -76,6 +79,8 @@ mv SRR7179537_pass.fastq.gz PC3_Normoxia_S2.fastq.gz
 mv SRR7179540_pass.fastq.gz PC3_Hypoxia_S1.fastq.gz
 mv SRR7179541_pass.fastq.gz PC3_Hypoxia_S2.fastq.gz
 ```
+<img width="1370" height="84" alt="Screenshot 2025-10-22 172504" src="https://github.com/user-attachments/assets/3f8bef29-f125-425d-8c67-70c329de2d0d" />
+
 5️⃣ Reference Genome & Annotation
 
 Download HISAT2 prebuilt GRCh38 genome index:
@@ -98,6 +103,8 @@ hisat2 -q -x grch38/genome -U fastq/LNCAP_Hypoxia_S1.fastq.gz | \
 
 samtools index alignedreads/LNCAP_Hypoxia_S1.bam
 ```
+<img width="1321" height="133" alt="Screenshot 2025-10-22 172623" src="https://github.com/user-attachments/assets/9371ba06-9adc-4359-a108-e1ad8fbc3edd" />
+
 7️⃣ Quantification (featureCounts)
 
 Generate gene × sample count matrix:
@@ -105,12 +112,15 @@ Generate gene × sample count matrix:
 featureCounts -S 2 -a Homo_sapiens.GRCh38.114.gtf \
   -o quants/featurecounts.txt alignedreads/*.bam
 ```
+
 8️⃣ Post-alignment QC (Qualimap)
 ```
 qualimap rnaseq -bam alignedreads/LNCAP_Hypoxia_S1.bam \
   -gtf Homo_sapiens.GRCh38.114.gtf \
   -outdir rnaseq_qc_results --java-mem-size=8G
 ```
+<img width="1466" height="85" alt="Screenshot 2025-10-22 172818" src="https://github.com/user-attachments/assets/7a3c4c4e-de55-4e43-a339-fd8a49ffa670" />
+
 9️⃣ Differential Expression Analysis (DESeq2)
   Perfect 👍 — here’s your **final ready-to-go `README.md`** version of the DESeq2 bulk RNA-seq workflow, now with **automatic PNG plot saving** (for sample distance heatmap, PCA, and individual gene expression plots).
 You can **copy-paste this directly** into your GitHub repository — everything is documented, runnable, and publication-ready.
