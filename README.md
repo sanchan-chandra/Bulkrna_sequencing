@@ -644,7 +644,7 @@ Performed differential expression analysis using DESeq2
 Gained insights into how hypoxia impacts prostate cancer cell lines
 
 👩‍🏫 Mentor  
-This work was carried out under the guidance of ** "Smriti Arora" **  
+# This work was carried out under the guidance of "Smriti Arora"   
 reference for the analysis: https://github.com/erilu/bulk-rnaseq-analysis  
 
 
