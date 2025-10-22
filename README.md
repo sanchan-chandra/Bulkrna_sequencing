@@ -417,13 +417,9 @@ write.csv(de_genes_padj, file = paste0(comparisons[1], "_vs_", comparisons[2], "
   write.table(res_prot_ranked, file = paste0(comparisons[1], "_vs_", comparisons[2], "_rank.rnk"), sep = "\t", row.names = FALSE, quote = FALSE)
 
 ```
-Perfect! I can write a **ready-to-go GitHub README snippet** for your volcano plot and log2 fold change comparison, formatted so you can copy-paste it directly. I’ll also clean up column names so it works with your CSVs (`Gene.name` → `hgnc_symbol`, `Gene.type` → `gene_biotype`) and include the necessary package imports.
-
-Here’s a full example you can put in your README:
-
 ---
 
-### 1️⃣ Volcano Plot
+**1️⃣ Volcano Plot**
 
 ```r
 # Load packages
@@ -472,7 +468,7 @@ plot_volcano(res, padj_cutoff = 0.0005, nlabel = 15, label.by = "padj")
 
 ---
 
-### 2️⃣ Log2 Fold Change Comparison Between Two Cell Lines
+**2️⃣ Log2 Fold Change Comparison Between Two Cell Lines**
 
 ```r
 # Load DE results for two comparisons
@@ -532,7 +528,7 @@ compare_significant_genes <- function(res1, res2, padj_cutoff = 0.0001, ngenes =
 ---
 
 
-## **Gene Set Enrichment Analysis (GSEA) of LNCaP Hypoxia RNA-seq**
+# **Gene Set Enrichment Analysis (GSEA) of LNCaP Hypoxia RNA-seq**
 
 ---
  **1. Load HALLMARK Pathways**
