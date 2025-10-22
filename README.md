@@ -1,8 +1,7 @@
 # Bulk RNA-Seq Analysis – Hypoxia Response in LNCaP and PC3 Cell Lines
 
-🎯 **Project Overview**
-This project demonstrates a complete Bulk RNA-Seq workflow, from raw sequencing data to identifying differentially expressed genes (DEGs).
-
+🎯 Project Overview  
+This project demonstrates a complete Bulk RNA-Seq workflow, from raw sequencing data up to differential expression analysis using DESeq2.
 We analyzed the effect of **hypoxia** on gene expression in two prostate cancer cell lines:
 
 * **LNCaP** – derived from a lymph node metastasis
@@ -105,7 +104,7 @@ featureCounts -S 2 -a Homo_sapiens.GRCh38.114.gtf \
   -o quants/featurecounts.txt alignedreads/*.bam
 ```
 
-8️⃣ Post-alignment QC (Qualimap)
+### 8️⃣ Post-alignment QC (Qualimap)
 ```
 qualimap rnaseq -bam alignedreads/LNCAP_Hypoxia_S1.bam \
   -gtf Homo_sapiens.GRCh38.114.gtf \
@@ -113,8 +112,9 @@ qualimap rnaseq -bam alignedreads/LNCAP_Hypoxia_S1.bam \
 ```
 <img width="1466" height="85" alt="Screenshot 2025-10-22 172818" src="https://github.com/user-attachments/assets/7a3c4c4e-de55-4e43-a339-fd8a49ffa670" />
 
-9️⃣ Differential Expression Analysis (DESeq2)
+9️⃣ Differential Expression Analysis (DESeq2)  
  Complete step by step guide is provided below 
+ 
 
 # 🧬 Bulk RNA-seq Differential Expression Analysis (DESeq2)
 
@@ -162,11 +162,7 @@ rownames(my_colData) <- colnames(data)
 ---
 We observe that each sample has been sequenced at a different “depth”, in which there are varying numbers of total reads for each sample. For example, PC3_Hypoxia_S2 has only 12 million reads, which is less than 1/3rd of the reads for PC3_Hypoxia_S1. This means that we cannot directly compare the count values between samples without normalizing each column based on its total read count. After the data have been processed using DESeq2, we will have normalized data that we can use to make comparisons.
 
-### 2️⃣ Create DESeq2 Object and Run Normalization
-
----
-
-##  Create colData for DESeq2
+## Create DESeq2 Object and Run Normalization
 
 Define the biological replicates for each condition:
 
@@ -187,7 +183,7 @@ Expected output:
 
 ---
 
-##  Create DESeq2 object
+###  Create DESeq2 object
 
 ```r
 library(DESeq2)
@@ -199,7 +195,7 @@ dds <- DESeqDataSetFromMatrix(countData = data,
 
 ---
 
-##  Run differential expression analysis
+###  Run differential expression analysis
 
 ```r
 dds <- DESeq(dds)
@@ -213,10 +209,10 @@ The function performs:
 
 ---
 
-##  Inspect the DESeq2 object
+###  Inspect the DESeq2 object
 
 ```r
-dds
+ddS
 ```
 
 Expected output includes:
@@ -226,7 +222,7 @@ Expected output includes:
 
 ---
 
-## Extract raw and normalized counts
+### Extract raw and normalized counts
 
 ```r
 # Raw counts
@@ -239,7 +235,7 @@ head(normalized_counts)
 
 ---
 
-## Step 10: Save normalized counts (optional)
+### Save normalized counts (optional)
 
 ```r
 write.csv(normalized_counts, "normalized_counts.csv", row.names = TRUE)
@@ -250,27 +246,36 @@ This CSV can be used for downstream analysis, visualization, or sharing with col
 
 
 ## 🧩 Gene Annotation
+###   🔧 Download Gene Annotations from Ensembl BioMart  
+1. Go to [Ensembl BioMart](http://uswest.ensembl.org/biomart/martview/).  
+2. Select **Database:** Ensembl Genes 99, **Dataset:** Human genes (GRCh38.p13).  
+3. Under **Attributes → Gene**, select:  
+   * Gene stable ID  
+   * Gene name  
+   * Gene type  
+     Deselect: Gene stable ID version, Transcript stable ID, Transcript stable ID version.  
+4. Click **Results → Export as CSV → Go**.  
+5. Rename the file to `GRCh38.p13_annotation.csv` and load in R:  
 
-To annotate genes:
+```r
+annotation <- read.csv("GRCh38.p13_annotation.csv")
+```
 
-* Use **BioMart → Ensembl Genes (GRCh38.p13)**
-* Select:
 
-  * ✅ Gene stable ID
-  * ✅ Gene name
-  * ✅ Gene type
 
 Then:
 
 ```r
-annotation <- read.csv("GRCh38_annotation.csv", header = TRUE)
-normalized_counts <- rownames_to_column(as.data.frame(normalized_counts), var = "ensembl_id")
-annotated_data <- right_join(annotation, normalized_counts, by = c("Gene.stable.ID" = "ensembl_id"))
-write.csv(annotated_data, "gene_annotated_normalized_counts.csv")
-```
+# Read gene annotation file
+annotation <- read.csv("GRCh38.p13_annotation.csv", header = TRUE)  # Contains Ensembl IDs, gene names, gene types
+# Convert rownames to a column if needed (skip if 'ensembl_id' already exists)
+# normalized_counts <- rownames_to_column(as.data.frame(normalized_counts), var = "ensembl_id")
+# Join annotation with normalized counts
+annotated_data <- right_join(annotation, normalized_counts, by = c("ensembl_gene_id" = "ensembl_id"))  # Match Ensembl IDs
+# Write the annotated data to CSV
+write.csv(annotated_data, "gene_annotated_normalized_counts.csv", row.names = FALSE)  # Save output
 
----
-Here’s a **concise version** of your visualization section for GitHub, with short explanations and code blocks:
+```
 
 ---
 
@@ -290,40 +295,55 @@ vsd <- vst(dds, blind = TRUE)
 ---
 
 ### **2. Distance Plot**
-
-```r
+```
 library(pheatmap)
-plotDists <- function(vsd.obj){
+library(RColorBrewer)
+
+plotDists <- function(vsd.obj, output_file){
   sampleDists <- dist(t(assay(vsd.obj)))
   sampleDistMatrix <- as.matrix(sampleDists)
-  rownames(sampleDistMatrix) <- vsd.obj$condition
-  colors <- colorRampPalette(rev(RColorBrewer::brewer.pal(9, "Blues")))(255)
-  pheatmap(sampleDistMatrix, clustering_distance_rows=sampleDists,
-           clustering_distance_cols=sampleDists, col=colors)
+  rownames(sampleDistMatrix) <- colnames(vsd.obj)
+  colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
+  png(filename = output_file, width = 1500, height = 1500, res = 300)
+  pheatmap(sampleDistMatrix,
+           clustering_distance_rows = sampleDists,
+           clustering_distance_cols = sampleDists,
+           col = colors)
+  dev.off()
 }
-plotDists(vsd)
-```
 
+plotDists(vsd, "/home/sanchan_chandrasheka/bulkrnaseq_analysis/deseq2_results/Distance_plot_samples.png")
+
+```
 > Euclidean distance between samples; similar samples cluster together.
 
----
+
 
 ### **3. Variable Genes Heatmap**
 
 ```r
+library(pheatmap)
 library(matrixStats)
-variable_gene_heatmap <- function(vsd.obj, num_genes=500, annotation){
-  counts <- assay(vsd.obj)
-  row_variances <- rowVars(counts)
-  top_genes <- counts[order(row_variances, decreasing=TRUE)[1:num_genes],]
-  top_genes <- top_genes - rowMeans(top_genes)
-  rownames(top_genes) <- annotation$Gene.name[match(rownames(top_genes), annotation$Gene.stable.ID)]
-  coldata <- as.data.frame(vsd.obj@colData)
-  coldata$sizeFactor <- NULL
-  pheatmap(top_genes, color=colorRampPalette(RColorBrewer::brewer.pal(11,"RdBu"))(256)[256:1],
-           annotation_col=coldata, fontsize_row=250/num_genes, fontsize_col=8, border_color=NA)
-}
-variable_gene_heatmap(vsd, num_genes=40, annotation=annotation)
+library(RColorBrewer)
+
+top_genes <- 40
+counts <- assay(vsd)
+row_variances <- rowVars(counts)
+top_counts <- counts[order(row_variances, decreasing=TRUE)[1:top_genes], ]
+top_counts <- top_counts - rowMeans(top_counts)
+rownames(top_counts) <- normalized_counts$hgnc_symbol[match(rownames(top_counts),
+                                                           normalized_counts$ensembl_gene_id)]
+coldata <- as.data.frame(vsd@colData)
+coldata$sizeFactor <- NULL
+
+png("/home/sanchan_chandrasheka/bulkrnaseq_analysis/deseq2_results/Variable_genes_heatmap.png",
+    width = 1500, height = 1500, res = 300)
+pheatmap(top_counts,
+         color = colorRampPalette(brewer.pal(11, "RdBu"))(256)[256:1],
+         annotation_col = coldata,
+         border_color = NA)
+dev.off()
+
 ```
 
 > Shows top variable genes driving sample clustering.
@@ -333,27 +353,224 @@ variable_gene_heatmap(vsd, num_genes=40, annotation=annotation)
 ### **4. PCA Plot**
 
 ```r
-library(ggplot2); library(ggrepel)
-plot_PCA <- function(vsd.obj){
-  pcaData <- plotPCA(vsd.obj, intgroup="condition", returnData=TRUE)
-  percentVar <- round(100*attr(pcaData,"percentVar"))
-  ggplot(pcaData, aes(PC1, PC2, color=condition)) +
+library(ggplot2)
+library(ggrepel)
+
+plot_PCA <- function(vsd.obj, output_file="PCA_plot.png") {
+  pcaData <- plotPCA(vsd.obj, intgroup = c("condition"), returnData = TRUE)
+  percentVar <- round(100 * attr(pcaData, "percentVar"))
+  p <- ggplot(pcaData, aes(PC1, PC2, color=condition)) +
     geom_point(size=3) +
-    labs(x=paste0("PC1: ",percentVar[1],"% variance"),
-         y=paste0("PC2: ",percentVar[2],"% variance"),
-         title="PCA Plot by condition") +
-    ggrepel::geom_text_repel(aes(label=name))
+    labs(x = paste0("PC1: ",percentVar[1],"% variance"),
+         y = paste0("PC2: ",percentVar[2],"% variance"),
+         title = "PCA Plot colored by condition") +
+    ggrepel::geom_text_repel(aes(label = name), color = "black") +
+    theme_bw(base_size = 14)
+  ggsave(output_file, plot = p, width = 6, height = 5, dpi = 300)
+  return(p)
 }
-plot_PCA(vsd)
+
+plot_PCA(vsd, output_file="/home/sanchan_chandrasheka/bulkrnaseq_analysis/deseq2_results/PCA_plot.png")
+
 ```
+
 
 > Visualizes sample similarity in 2D; replicates cluster together.
 
+
+#  Extract DE results
+
+```
+res <- results(dds, contrast = c("condition", "LNCAP_Hypoxia", "LNCAP_Normoxia"))
+
+
+### 3. Annotate genes and calculate CPM
+
+
+# Load annotation
+annotation <- read.csv("GRCh38.p13_annotation.csv", header = TRUE, stringsAsFactors = FALSE)
+
+# Calculate average CPM
+raw_counts <- counts(dds, normalized = FALSE)
+cpms <- rowMeans(edgeR::cpm(raw_counts))
+cpms <- tibble(ensembl_id = rownames(dds), avg_cpm = cpms)
+
+# Merge results, annotation, and CPM
+res_tib <- as_tibble(res, rownames = "ensembl_id") %>%
+           left_join(annotation, by = c("ensembl_id" = "ensembl_gene_id")) %>%
+           left_join(cpms, by = "ensembl_id")
+
+
+### 4. Filter DE genes
+
+
+de_genes_padj <- res_tib %>% filter(padj < 0.001)
+de_genes_log2f <- res_tib %>% filter(padj < 0.001 & abs(log2FoldChange) > 0.5)
+de_genes_cpm <- res_tib %>% filter(padj < 0.001 & avg_cpm > 2)
+
+
+# 5. Prepare ranked list for GSEA
+
+
+res_prot <- res_tib %>% filter(gene_biotype == "protein_coding") %>%
+            select(hgnc_symbol, log2FoldChange) %>%
+            drop_na() %>%
+            mutate(hgnc_symbol = toupper(hgnc_symbol)) %>%
+            arrange(desc(log2FoldChange))
+
+write.table(res_prot, file = "LNCAP_Hypoxia_vs_Normoxia_rank.rnk",
+            sep = "\t", row.names = FALSE, quote = FALSE)
+
+
+6. Save filtered CSV files
+
+
+write.csv(de_genes_padj, file = paste0(comparisons[1], "_vs_", comparisons[2], "_padj_cutoff.csv"), row.names = FALSE)
+  write.csv(de_genes_log2f, file = paste0(comparisons[1], "_vs_", comparisons[2], "_log2fc_cutoff.csv"), row.names = FALSE)
+  write.csv(de_genes_cpm, file = paste0(comparisons[1], "_vs_", comparisons[2], "_cpm_cutoff.csv"), row.names = FALSE)
+  write.csv(combined_data, file = paste0(comparisons[1], "_vs_", comparisons[2], "_allgenes.csv"), row.names = FALSE)
+  write.table(res_prot_ranked, file = paste0(comparisons[1], "_vs_", comparisons[2], "_rank.rnk"), sep = "\t", row.names = FALSE, quote = FALSE)
+
+
+### 7. Volcano plot
+
+
+res_plot <- res_tib %>% 
+            mutate(sig = ifelse(padj < 0.001 & abs(log2FoldChange) > 0.5, "Significant", "NS"))
+
+volcano <- ggplot(res_plot, aes(x = log2FoldChange, y = -log10(padj), color = sig)) +
+           geom_point(alpha = 0.6, size = 1.5) +
+           scale_color_manual(values = c("grey", "red")) +
+           theme_minimal() +
+           labs(title = "Volcano Plot: LNCAP Hypoxia vs Normoxia", x = "log2FoldChange", y = "-log10(padj)")
+
+ggsave("LNCAP_volcano_plot.png", plot = volcano, width = 8, height = 6, dpi = 150)
+```
+
 ---
 
-This is **compact, readable, and ready to paste** into your GitHub README.
 
-If you want, I can also make a **version with emojis for each step** to make it visually appealing on GitHub. Do you want me to do that?
+## **Gene Set Enrichment Analysis (GSEA) of LNCaP Hypoxia RNA-seq**
+
+This workflow performs **GSEA** on LNCaP prostate cancer cells under **hypoxia vs normoxia** conditions using the **HALLMARK pathways**.
+
+---
+
+
+---
+ **1. Load HALLMARK Pathways**
+
+Option 1: **Download GMT file manually** (`h.all.v7.0.symbols.gmt.txt`) from [MSigDB](https://www.gsea-msigdb.org/gsea/msigdb/collections.jsp)
+
+```r
+hallmark_pathway <- gmtPathways("h.all.v7.0.symbols.gmt.txt")
+head(names(hallmark_pathway))
+```
+
+Option 2: **Use `msigdbr`** (requires stable internet)
+
+```r
+hallmark_genesets <- msigdbr(species = "Homo sapiens", collection = "H")
+```
+
+---
+
+**2. Load and Prepare Ranked List**
+
+```r
+lncap_ranked_list <- read.table("LNCAP_Hypoxia_vs_LNCAP_Normoxia_rank.rnk",
+                                header = TRUE, stringsAsFactors = FALSE)
+
+prepare_ranked_list <- function(ranked_list) { 
+  if (sum(duplicated(ranked_list$Gene.name)) > 0) {
+    ranked_list <- aggregate(. ~ Gene.name, FUN = mean, data = ranked_list)
+    ranked_list <- ranked_list[order(ranked_list$log2FoldChange, decreasing = TRUE), ]
+  }
+  ranked_list <- na.omit(ranked_list)
+  tibble::deframe(ranked_list)
+}
+
+lncap_ranked_list <- prepare_ranked_list(lncap_ranked_list)
+head(lncap_ranked_list)
+```
+
+---
+
+**3. Run GSEA**
+
+```r
+fgsea_results <- fgsea(pathways = hallmark_pathway,
+                       stats = lncap_ranked_list,
+                       minSize = 15,
+                       maxSize = 500,
+                       nperm = 1000)
+
+fgsea_results %>% 
+  arrange(desc(NES)) %>% 
+  select(pathway, padj, NES) %>% 
+  head()
+```
+
+* **NES** = Normalized Enrichment Score
+* **padj** = adjusted p-value
+
+---
+
+**4. Visualize Pathway Enrichment**
+
+**Waterfall Plot**
+
+```r
+waterfall_plot <- function(fgsea_results, graph_title) {
+  fgsea_results %>% 
+    mutate(short_name = str_split_fixed(pathway, "_", 2)[,2]) %>%
+    ggplot(aes(reorder(short_name, NES), NES)) +
+    geom_bar(stat = "identity", aes(fill = padj < 0.05)) +
+    coord_flip() +
+    labs(x = "Hallmark Pathway", y = "Normalized Enrichment Score", title = graph_title) +
+    theme(axis.text.y = element_text(size = 7),
+          plot.title = element_text(hjust = 0.5))
+}
+
+waterfall_plot(fgsea_results, "Hallmark pathways altered by hypoxia in LNCaP cells")
+```
+
+---
+
+**Enrichment Curves (Individual Pathways)**
+
+```r
+# Positively enriched (up in hypoxia)
+png("HALLMARK_GLYCOLYSIS_enrichment.png", width = 800, height = 600, res = 150)
+plotEnrichment(hallmark_pathway[["HALLMARK_GLYCOLYSIS"]], lncap_ranked_list) +
+  labs(title = "HALLMARK_GLYCOLYSIS enrichment in LNCaP hypoxia") +
+  theme_minimal()
+dev.off()
+
+# Hypoxia pathway
+png("HALLMARK_HYPOXIA_enrichment.png", width = 800, height = 600, res = 150)
+plotEnrichment(hallmark_pathway[["HALLMARK_HYPOXIA"]], lncap_ranked_list) +
+  labs(title = "HALLMARK_HYPOXIA enrichment in LNCaP hypoxia") +
+  theme_minimal()
+dev.off()
+
+# Negatively enriched (down in hypoxia)
+png("HALLMARK_OXIDATIVE_PHOSPHORYLATION_enrichment.png", width = 800, height = 600, res = 150)
+plotEnrichment(hallmark_pathway[["HALLMARK_OXIDATIVE_PHOSPHORYLATION"]], lncap_ranked_list) +
+  labs(title = "HALLMARK_OXIDATIVE_PHOSPHORYLATION enrichment in LNCaP hypoxia") +
+  theme_minimal()
+dev.off()
+```
+
+---
+
+** Interpretation**
+
+* **Most enriched in hypoxia**: `HALLMARK_HYPOXIA`, `ANDROGEN_RESPONSE`, `MTORC1_SIGNALING`
+* **Metabolic switch**: Glycolysis up, oxidative phosphorylation down
+* **Unexpected**: Interferon response negatively enriched
+
+---
 
 
 ## 📚 References
