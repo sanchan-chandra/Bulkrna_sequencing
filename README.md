@@ -124,9 +124,7 @@ Output: QC reports for aligned reads
 
 # 🧬 Bulk RNA-seq Differential Expression Analysis (DESeq2)
 
-This repository provides a complete workflow for **bulk RNA-seq differential gene expression analysis** using **DESeq2** in R.
-It includes preprocessing, normalization, visualization, and statistical testing — plus automatic plot export for easy reproducibility.
-
+A complete workflow for **bulk RNA-seq differential gene expression analysis** using **DESeq2** in R.
 ---
 
 ## ⚙️ Installation , Load Data and Packages
