@@ -21,9 +21,9 @@ For each cell line, we compared **Normoxia vs Hypoxia** to identify genes that r
 
 
 ## 🧬💻 Step-by-step guide with code
-1️⃣ Data Acquisition
-1.Download .sra files using SRA Toolkit
-2.Convert .sra → .fastq.gz using fastq-dump
+1️⃣ Data Acquisition  
+1.Download .sra files using SRA Toolkit  
+2.Convert .sra → .fastq.gz using fastq-dump  
 ```
 # Download SRA
 prefetch SRR7179504
