@@ -40,7 +40,7 @@ prefetch SRR7179504
 fastq-dump --outdir fastq --gzip --skip-technical --readids \
 --read-filter pass --dumpbase --split-3 --clip SRR7179504/SRR7179504.sra
 ```
-<img width="742.4" height="182.4" alt="Screenshot 2025-10-22 171653" src="https://github.com/user-attachments/assets/b57e5476-e08a-4490-bd7d-37efc96a7e4f" />
+<img width="600" height="120" alt="Screenshot 2025-10-22 171653" src="https://github.com/user-attachments/assets/b57e5476-e08a-4490-bd7d-37efc96a7e4f" />
 
 2️⃣ Quality Control (QC)
 
