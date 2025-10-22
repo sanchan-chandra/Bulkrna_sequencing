@@ -35,6 +35,7 @@ Note: Each biological sample is split into multiple technical runs (SRR IDs). We
 ```
 # Download SRA
 prefetch SRR7179504
+<img width="928" height="228" alt="Screenshot 2025-10-22 171653" src="https://github.com/user-attachments/assets/436e4fdb-653a-4bb2-8ac0-673455518355" />
 
 # Convert to FASTQ
 fastq-dump --outdir fastq --gzip --skip-technical --readids \
