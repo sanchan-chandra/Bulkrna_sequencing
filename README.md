@@ -50,7 +50,7 @@ Check sequencing quality using FastQC and summarize with MultiQC:
 mkdir -p fastqc_results
 fastqc fastq/*.fastq.gz -o fastqc_results/ --threads 8
 ```
-<img width="800" height="200" alt="Screenshot 2025-10-22 172214" src="https://github.com/user-attachments/assets/7e18d07c-7630-441f-9b1e-082062eef1f0" />
+<img width="600" height="200" alt="Screenshot 2025-10-22 172214" src="https://github.com/user-attachments/assets/7e18d07c-7630-441f-9b1e-082062eef1f0" />
 
 ```
 # Aggregate with MultiQC
