@@ -32,7 +32,7 @@ prefetch SRR7179504
 fastq-dump --outdir fastq --gzip --skip-technical --readids \
 --read-filter pass --dumpbase --split-3 --clip SRR7179504/SRR7179504.sra
 ```
-Output: FASTQ files (raw sequencing reads)
+Output: FASTQ files (raw sequencing reads)  
 <img width="600" height="120" alt="Screenshot 2025-10-22 171653" src="https://github.com/user-attachments/assets/b57e5476-e08a-4490-bd7d-37efc96a7e4f" />
 
 ### 2️⃣ Quality Control (QC)
@@ -43,7 +43,7 @@ Check sequencing quality using FastQC and summarize with MultiQC:
 mkdir -p fastqc_results
 fastqc fastq/*.fastq.gz -o fastqc_results/ --threads 8
 ```
-Output: HTML reports showing sequencing quality  
+Output: HTML reports showing sequencing quality    
 <img width="600" height="200" alt="Screenshot 2025-10-22 172214" src="https://github.com/user-attachments/assets/7e18d07c-7630-441f-9b1e-082062eef1f0" />
 
 ```
