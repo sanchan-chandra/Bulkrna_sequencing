@@ -278,7 +278,7 @@ write.csv(annotated_data, "gene_annotated_normalized_counts.csv", row.names = FA
 
 We assess sample-to-sample variability to identify outliers and check experiment quality.
 
- **1. Variance Stabilizing Transformation**  
+ **Variance Stabilizing Transformation**
 
 ```r
 library(DESeq2)
@@ -289,7 +289,7 @@ vsd <- vst(dds, blind = TRUE)
 
 ---
 
-**2. Distance Plot**  
+**Distance Plot**  
 ```
 library(pheatmap)
 library(RColorBrewer)
@@ -314,7 +314,7 @@ plotDists(vsd, "/home/sanchan_chandrasheka/bulkrnaseq_analysis/deseq2_results/Di
 
 
 
-**3. Variable Genes Heatmap**  
+**Variable Genes Heatmap**  
 
 ```r
 library(pheatmap)
@@ -345,7 +345,7 @@ dev.off()
 
 ---
 
-**4. PCA Plot**  
+**PCA Plot**  
 
 ```r
 library(ggplot2)
