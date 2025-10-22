@@ -634,18 +634,18 @@ dev.off()
 Overall, this pipeline provides a robust framework for confidently exploring, visualizing, and interpreting bulk RNA-sequencing data.
 
 ### 📚 Learning Outcomes
-Learned how to process raw RNA-Seq data step by step
-Understood the importance of QC at every stage
-Experienced handling large datasets and merging technical replicates
-Performed differential expression analysis using DESeq2
+Learned how to process raw RNA-Seq data step by step  
+Understood the importance of QC at every stage  
+Experienced handling large datasets and merging technical replicates   
+Performed differential expression analysis using DESeq2  
 Gained insights into how hypoxia impacts prostate cancer cell lines  
 
 ### 👩‍🏫 Mentor  
 This work was carried out under the guidance of "Smriti Arora"   
 reference for the analysis: https://github.com/erilu/bulk-rnaseq-analysis  
 
-### 📬 Contact
-Author: Sanchan Chandrashekar
+### 📬 Contact  
+Author: Sanchan Chandrashekar  
 Email: sanchan4000@gmail.com
 
 
