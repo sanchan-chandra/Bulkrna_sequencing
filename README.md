@@ -129,7 +129,7 @@ It includes preprocessing, normalization, visualization, and statistical testing
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Installation , Load Data and Packages
 
 Install all dependencies via Bioconductor and CRAN:
 
@@ -140,10 +140,9 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install(c("DESeq2", "apeglm", "EnhancedVolcano", "pheatmap", "RColorBrewer"))
 install.packages(c("tidyverse", "ggrepel"))
 ```
-
-### 1️⃣ Load Data and Packages
-
+Load Data and Packages
 ```r
+
 library(DESeq2)
 library(tidyverse)
 library(pheatmap)
@@ -166,7 +165,7 @@ rownames(my_colData) <- colnames(data)
 <img width="797" height="110" alt="Screenshot 2025-10-22 174924" src="https://github.com/user-attachments/assets/d95580cc-4fbd-449c-b9b7-dd06923283e0" />
 
 ---
-We observe that each sample has been sequenced at a different “depth”, in which there are varying numbers of total reads for each sample. For example, PC3_Hypoxia_S2 has only 12 million reads, which is less than 1/3rd of the reads for PC3_Hypoxia_S1. This means that we cannot directly compare the count values between samples without normalizing each column based on its total read count. After the data have been processed using DESeq2, we will have normalized data that we can use to make comparisons.
+
 
 ## Create DESeq2 Object and Run Normalization
 
@@ -266,8 +265,6 @@ This CSV can be used for downstream analysis, visualization, or sharing with col
 ```r
 annotation <- read.csv("GRCh38.p13_annotation.csv")
 ```
-
-
 
 Then:
 
@@ -384,14 +381,10 @@ plot_PCA(vsd, output_file="/home/sanchan_chandrasheka/bulkrnaseq_analysis/deseq2
 > Visualizes sample similarity in 2D; replicates cluster together.
 
 
-#  Extract DE results
-
+##  Extract DE results
+To extract the differentially expressed genes from the DESeq2 object, we will use the results() function:
 ```
 res <- results(dds, contrast = c("condition", "LNCAP_Hypoxia", "LNCAP_Normoxia"))
-
-
-### 3. Annotate genes and calculate CPM
-
 
 # Load annotation
 annotation <- read.csv("GRCh38.p13_annotation.csv", header = TRUE, stringsAsFactors = FALSE)
@@ -405,19 +398,11 @@ cpms <- tibble(ensembl_id = rownames(dds), avg_cpm = cpms)
 res_tib <- as_tibble(res, rownames = "ensembl_id") %>%
            left_join(annotation, by = c("ensembl_id" = "ensembl_gene_id")) %>%
            left_join(cpms, by = "ensembl_id")
-
-
-### 4. Filter DE genes
-
-
+# 4. Filter DE genes
 de_genes_padj <- res_tib %>% filter(padj < 0.001)
 de_genes_log2f <- res_tib %>% filter(padj < 0.001 & abs(log2FoldChange) > 0.5)
 de_genes_cpm <- res_tib %>% filter(padj < 0.001 & avg_cpm > 2)
-
-
 # 5. Prepare ranked list for GSEA
-
-
 res_prot <- res_tib %>% filter(gene_biotype == "protein_coding") %>%
             select(hgnc_symbol, log2FoldChange) %>%
             drop_na() %>%
@@ -426,42 +411,130 @@ res_prot <- res_tib %>% filter(gene_biotype == "protein_coding") %>%
 
 write.table(res_prot, file = "LNCAP_Hypoxia_vs_Normoxia_rank.rnk",
             sep = "\t", row.names = FALSE, quote = FALSE)
-
-
-6. Save filtered CSV files
-
-
+#6. Save filtered CSV files
 write.csv(de_genes_padj, file = paste0(comparisons[1], "_vs_", comparisons[2], "_padj_cutoff.csv"), row.names = FALSE)
   write.csv(de_genes_log2f, file = paste0(comparisons[1], "_vs_", comparisons[2], "_log2fc_cutoff.csv"), row.names = FALSE)
   write.csv(de_genes_cpm, file = paste0(comparisons[1], "_vs_", comparisons[2], "_cpm_cutoff.csv"), row.names = FALSE)
   write.csv(combined_data, file = paste0(comparisons[1], "_vs_", comparisons[2], "_allgenes.csv"), row.names = FALSE)
   write.table(res_prot_ranked, file = paste0(comparisons[1], "_vs_", comparisons[2], "_rank.rnk"), sep = "\t", row.names = FALSE, quote = FALSE)
 
-
-### 7. Volcano plot
-
-
-res_plot <- res_tib %>% 
-            mutate(sig = ifelse(padj < 0.001 & abs(log2FoldChange) > 0.5, "Significant", "NS"))
-
-volcano <- ggplot(res_plot, aes(x = log2FoldChange, y = -log10(padj), color = sig)) +
-           geom_point(alpha = 0.6, size = 1.5) +
-           scale_color_manual(values = c("grey", "red")) +
-           theme_minimal() +
-           labs(title = "Volcano Plot: LNCAP Hypoxia vs Normoxia", x = "log2FoldChange", y = "-log10(padj)")
-
-ggsave("LNCAP_volcano_plot.png", plot = volcano, width = 8, height = 6, dpi = 150)
 ```
+Perfect! I can write a **ready-to-go GitHub README snippet** for your volcano plot and log2 fold change comparison, formatted so you can copy-paste it directly. I’ll also clean up column names so it works with your CSVs (`Gene.name` → `hgnc_symbol`, `Gene.type` → `gene_biotype`) and include the necessary package imports.
+
+Here’s a full example you can put in your README:
+
+---
+
+## 1️⃣ Volcano Plot
+
+```r
+# Load packages
+library(ggplot2)
+library(dplyr)
+library(ggrepel)
+
+# Load DE results CSV
+res <- read.csv("LNCAP_Hypoxia_vs_LNCAP_Normoxia_allgenes.csv", header = TRUE)
+
+# Volcano plot function
+plot_volcano <- function(res, padj_cutoff = 0.0005, nlabel = 10, label.by = "padj") {
+  # assign significance
+  res <- res %>%
+    mutate(significance = ifelse(padj < padj_cutoff,
+                                 paste0("padj < ", padj_cutoff),
+                                 paste0("padj > ", padj_cutoff))) %>%
+    filter(!is.na(significance))
+  
+  significant_genes <- res %>% filter(significance == paste0("padj < ", padj_cutoff))
+  
+  # Get top and bottom genes
+  if(label.by == "padj") {
+    top_genes <- significant_genes %>% arrange(padj) %>% head(nlabel)
+    bottom_genes <- significant_genes %>% filter(log2FoldChange < 0) %>% arrange(padj) %>% head(nlabel)
+  } else if(label.by == "log2FoldChange") {
+    top_genes <- significant_genes %>% arrange(desc(log2FoldChange)) %>% head(nlabel)
+    bottom_genes <- significant_genes %>% arrange(log2FoldChange) %>% head(nlabel)
+  } else stop("Invalid label.by argument. Choose either padj or log2FoldChange.")
+  
+  ggplot(res, aes(x = log2FoldChange, y = -log10(padj))) +
+    geom_point(aes(color = significance)) +
+    scale_color_manual(values = c("red", "black")) +
+    ggrepel::geom_text_repel(data = top_genes, aes(label = hgnc_symbol), size = 3) +
+    ggrepel::geom_text_repel(data = bottom_genes, aes(label = hgnc_symbol), color = "#619CFF", size = 3) +
+    geom_vline(xintercept = 0, linetype = "dotted") +
+    labs(x = "Log2FoldChange", y = "-log10(padj)") +
+    theme_minimal()
+}
+
+# Example usage
+plot_volcano(res, padj_cutoff = 0.0005, nlabel = 15, label.by = "padj")
+````
+
+> Genes downregulated are labeled in blue, upregulated in red. This allows quick identification of highly significant DE genes.
+
+---
+
+## 2️⃣ Log2 Fold Change Comparison Between Two Cell Lines
+
+```r
+# Load DE results for two comparisons
+res1 <- read.csv("LNCAP_Hypoxia_vs_LNCAP_Normoxia_allgenes.csv", header = TRUE)
+res2 <- read.csv("PC3_Hypoxia_vs_PC3_Normoxia_allgenes.csv", header = TRUE)
+
+compare_significant_genes <- function(res1, res2, padj_cutoff = 0.0001, ngenes = 250, nlabel = 10,
+                                      samplenames = c("comparison1", "comparison2"), title = "") {
+  # Top up/down regulated genes
+  genes1 <- rbind(head(res1[res1$padj < padj_cutoff,], ngenes),
+                  tail(res1[res1$padj < padj_cutoff,], ngenes))
+  genes2 <- rbind(head(res2[res2$padj < padj_cutoff,], ngenes),
+                  tail(res2[res2$padj < padj_cutoff,], ngenes))
+  
+  # Union of genes
+  de_union <- union(genes1$ensembl_id, genes2$ensembl_id)
+  res1_union <- res1[match(de_union, res1$ensembl_id), c("ensembl_id", "log2FoldChange", "hgnc_symbol")]
+  res2_union <- res2[match(de_union, res2$ensembl_id), c("ensembl_id", "log2FoldChange", "hgnc_symbol")]
+  combined <- dplyr::left_join(res1_union, res2_union, by = "ensembl_id", suffix = samplenames)
+  
+  # Identify overlapping and unique DE genes
+  combined$de_condition <- "None"
+  combined$de_condition[combined$ensembl_id %in% intersect(genes1$ensembl_id, genes2$ensembl_id)] <- "Significant in Both"
+  combined$de_condition[combined$ensembl_id %in% setdiff(genes1$ensembl_id, genes2$ensembl_id)] <- paste0("Significant in ", samplenames[1])
+  combined$de_condition[combined$ensembl_id %in% setdiff(genes2$ensembl_id, genes1$ensembl_id)] <- paste0("Significant in ", samplenames[2])
+  combined[is.na(combined)] <- 0
+  
+  # Labels
+  label1 <- rbind(head(combined[combined$de_condition==paste0("Significant in ", samplenames[1]),], nlabel),
+                  tail(combined[combined$de_condition==paste0("Significant in ", samplenames[1]),], nlabel))
+  label2 <- rbind(head(combined[combined$de_condition==paste0("Significant in ", samplenames[2]),], nlabel),
+                  tail(combined[combined$de_condition==paste0("Significant in ", samplenames[2]),], nlabel))
+  label3 <- rbind(head(combined[combined$de_condition=="Significant in Both",], nlabel),
+                  tail(combined[combined$de_condition=="Significant in Both",], nlabel))
+  combined_labels <- rbind(label1, label2, label3)
+  
+  # Scatter plot of log2FC
+  ggplot(combined, aes_string(x = paste0("log2FoldChange", samplenames[1]),
+                              y = paste0("log2FoldChange", samplenames[2]))) +
+    geom_point(aes(color = de_condition), size = 0.7) +
+    scale_color_manual(values = c("#00BA38", "#619CFF", "#F8766D")) +
+    ggrepel::geom_text_repel(data = combined_labels,
+                             aes_string(label = paste0("hgnc_symbol", samplenames[1]), color = "de_condition"),
+                             show.legend = FALSE, size = 3) +
+    geom_vline(xintercept = 0, linetype = 2, size = 0.3) +
+    geom_hline(yintercept = 0, linetype = 2, size = 0.3) +
+    labs(title = title,
+         x = paste0("log2FoldChange in ", samplenames[1]),
+         y = paste0("log2FoldChange in ", samplenames[2])) +
+    theme_minimal() +
+    theme(legend.title = element_blank())
+}
+
+```
+
 
 ---
 
 
 ## **Gene Set Enrichment Analysis (GSEA) of LNCaP Hypoxia RNA-seq**
-
-This workflow performs **GSEA** on LNCaP prostate cancer cells under **hypoxia vs normoxia** conditions using the **HALLMARK pathways**.
-
----
-
 
 ---
  **1. Load HALLMARK Pathways**
@@ -569,23 +642,15 @@ dev.off()
 ```
 
 ---
+ 
 
-** Interpretation**
-
-* **Most enriched in hypoxia**: `HALLMARK_HYPOXIA`, `ANDROGEN_RESPONSE`, `MTORC1_SIGNALING`
-* **Metabolic switch**: Glycolysis up, oxidative phosphorylation down
-* **Unexpected**: Interferon response negatively enriched
+Overall, this pipeline provides a robust framework for confidently exploring, visualizing, and interpreting bulk RNA-sequencing data.
 
 ---
 
-
-## 📚 References
-
-* Love, M.I., Huber, W., & Anders, S. (2014). *Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2.* Genome Biology, 15(12), 550.
-* Ensembl BioMart: [https://www.ensembl.org/biomart](https://www.ensembl.org/biomart)
-
+reference for the analysis:
+ https://github.com/erilu/bulk-rnaseq-analysis
 ---
 
-Would you like me to also include a **Volcano plot** (with automatic PNG export) section in this same README? It’s often used for highlighting significant up- and downregulated genes visually.
 
 
