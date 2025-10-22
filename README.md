@@ -1,37 +1,34 @@
 # Bulk RNA-Seq Analysis – Hypoxia Response in LNCaP and PC3 Cell Lines
 🎯 Project Overview
-
 This project demonstrates an end-to-end Bulk RNA-Seq analysis workflow from raw SRA files to differentially expressed genes (DEGs).
-
 We investigated how hypoxia alters gene expression in two prostate cancer cell lines:
 | Cell Line | Origin                                                                |
 | --------- | --------------------------------------------------------------------- |
 | LNCaP     | Derived from a lymph node metastasis of human prostate adenocarcinoma |
 | PC3       | Derived from a bone metastasis of a grade IV prostate adenocarcinoma  |
-
 We compared Normoxia vs Hypoxia conditions in each cell line.
 
-📌 Objectives
+⚙️ Workflow Overview
 
-Learn a basic workflow of bulk RNA-Seq analysis
-
-Perform quality control, alignment, quantification, and differential expression analysis
-
-Visualize results using PCA, heatmaps, volcano plots, and perform pathway enrichment
-
-Document a reproducible workflow for beginners
+-The workflow consists of the following major steps:
+-Download raw data from NCBI SRA
+-Convert SRA → FASTQ 
+-Quality control with FastQC
+-Read trimming/filtering (optional)
+-Align reads to reference genome (using HISAT2)
+-Quantify gene expression (featureCounts)
+-Merge counts into a counts matrix
+-Differential expression analysis using DESeq2
+-Visualization and interpretation (PCA, heatmaps, volcano plots)
 
 📂 Dataset Information
 
 GEO Accession: GSE106305
-
 Citation: Guo H, Ci X, Ahmed M, Hua JT et al. ONECUT2 is a driver of neuroendocrine prostate cancer. Nat Commun 2019 Jan 17;10(1):278. PMID: 30655535
-
 Description: RNA-Seq and ChIP-Seq experiments in LNCaP and PC3 cells under normoxia and hypoxia conditions.
-
 Note: Each biological sample is split into multiple technical runs (SRR IDs). We merged 20 SRR files into 8 final FASTQ files for analysis.
 
-⚙️ Workflow Overview
+🧬💻 Step-by-step guide with code
 1️⃣ Data Acquisition
 1.Download .sra files using SRA Toolkit
 2.Convert .sra → .fastq.gz using fastq-dump
