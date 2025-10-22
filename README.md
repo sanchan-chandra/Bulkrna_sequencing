@@ -390,20 +390,19 @@ cpms <- tibble(ensembl_id = rownames(dds), avg_cpm = cpms)
 res_tib <- as_tibble(res, rownames = "ensembl_id") %>%
            left_join(annotation, by = c("ensembl_id" = "ensembl_gene_id")) %>%
            left_join(cpms, by = "ensembl_id")
-# 4. Filter DE genes
+#Filter DE genes
 de_genes_padj <- res_tib %>% filter(padj < 0.001)
 de_genes_log2f <- res_tib %>% filter(padj < 0.001 & abs(log2FoldChange) > 0.5)
 de_genes_cpm <- res_tib %>% filter(padj < 0.001 & avg_cpm > 2)
-# 5. Prepare ranked list for GSEA
+#Prepare ranked list for GSEA
 res_prot <- res_tib %>% filter(gene_biotype == "protein_coding") %>%
             select(hgnc_symbol, log2FoldChange) %>%
             drop_na() %>%
             mutate(hgnc_symbol = toupper(hgnc_symbol)) %>%
             arrange(desc(log2FoldChange))
-
 write.table(res_prot, file = "LNCAP_Hypoxia_vs_Normoxia_rank.rnk",
             sep = "\t", row.names = FALSE, quote = FALSE)
-#6. Save filtered CSV files
+#Save filtered CSV files
 write.csv(de_genes_padj, file = paste0(comparisons[1], "_vs_", comparisons[2], "_padj_cutoff.csv"), row.names = FALSE)
   write.csv(de_genes_log2f, file = paste0(comparisons[1], "_vs_", comparisons[2], "_log2fc_cutoff.csv"), row.names = FALSE)
   write.csv(de_genes_cpm, file = paste0(comparisons[1], "_vs_", comparisons[2], "_cpm_cutoff.csv"), row.names = FALSE)
