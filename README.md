@@ -48,7 +48,7 @@ fastqc fastq/*.fastq.gz -o fastqc_results/ --threads 8
 # Aggregate with MultiQC
 multiqc fastqc_results/ -o multiqc_report/
 ```
-3️⃣ (Optional) Read Trimming
+### 3️⃣ (Optional) Read Trimming
 
 Remove low-quality bases or adapters with Trimmomatic:
 ```
@@ -57,7 +57,7 @@ trimmomatic SE -threads 4 -phred33 \
   fastq/SRR7179504_trimmed.fastq.gz \
   TRAILING:10
 ```
-4️⃣ Merge Technical Runs
+### 4️⃣ Merge Technical Runs
 
 Concatenate multiple SRR files per biological replicate:
 ```
@@ -73,7 +73,7 @@ mv SRR7179541_pass.fastq.gz PC3_Hypoxia_S2.fastq.gz
 ```
 <img width="685" height="42" alt="Screenshot 2025-10-22 172504" src="https://github.com/user-attachments/assets/3f8bef29-f125-425d-8c67-70c329de2d0d" />
 
-5️⃣ Reference Genome & Annotation
+### 5️⃣ Reference Genome & Annotation
 
 Download HISAT2 prebuilt GRCh38 genome index:
 ```
@@ -86,7 +86,7 @@ Download Ensembl GTF annotation:
 wget https://ftp.ensembl.org/pub/release-114/gtf/homo_sapiens/Homo_sapiens.GRCh38.114.gtf.gz
 gunzip Homo_sapiens.GRCh38.114.gtf.gz
 ```
-6️⃣ Alignment (HISAT2 → Samtools)
+### 6️⃣ Alignment (HISAT2 → Samtools)
 
 Align reads and convert to sorted & indexed BAM:
 ```
@@ -95,9 +95,9 @@ hisat2 -q -x grch38/genome -U fastq/LNCAP_Hypoxia_S1.fastq.gz | \
 
 samtools index alignedreads/LNCAP_Hypoxia_S1.bam
 ```
-<img width="1321" height="133" alt="Screenshot 2025-10-22 172623" src="https://github.com/user-attachments/assets/9371ba06-9adc-4359-a108-e1ad8fbc3edd" />
+<img width="600" height="108" alt="Screenshot 2025-10-22 172623" src="https://github.com/user-attachments/assets/9371ba06-9adc-4359-a108-e1ad8fbc3edd" />
 
-7️⃣ Quantification (featureCounts)
+### 7️⃣ Quantification (featureCounts)
 
 Generate gene × sample count matrix:
 ```
@@ -114,10 +114,7 @@ qualimap rnaseq -bam alignedreads/LNCAP_Hypoxia_S1.bam \
 <img width="1466" height="85" alt="Screenshot 2025-10-22 172818" src="https://github.com/user-attachments/assets/7a3c4c4e-de55-4e43-a339-fd8a49ffa670" />
 
 9️⃣ Differential Expression Analysis (DESeq2)
-  Perfect 👍 — here’s your **final ready-to-go `README.md`** version of the DESeq2 bulk RNA-seq workflow, now with **automatic PNG plot saving** (for sample distance heatmap, PCA, and individual gene expression plots).
-You can **copy-paste this directly** into your GitHub repository — everything is documented, runnable, and publication-ready.
-
----
+ Complete step by step guide is provided below 
 
 # 🧬 Bulk RNA-seq Differential Expression Analysis (DESeq2)
 
@@ -137,20 +134,6 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install(c("DESeq2", "apeglm", "EnhancedVolcano", "pheatmap", "RColorBrewer"))
 install.packages(c("tidyverse", "ggrepel"))
 ```
-
----
-
-## 📂 Input Files
-
-| File                    | Description                                                |
-| ----------------------- | ---------------------------------------------------------- |
-| `raw_counts.csv`        | Raw integer count matrix (rows = genes, columns = samples) |
-| `GRCh38_annotation.csv` | Annotation file from Ensembl BioMart                       |
-| *(optional)*            | Metadata (can be created inside the script)                |
-
----
-
-## 🧮 Workflow
 
 ### 1️⃣ Load Data and Packages
 
