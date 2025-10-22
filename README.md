@@ -79,7 +79,7 @@ mv SRR7179537_pass.fastq.gz PC3_Normoxia_S2.fastq.gz
 mv SRR7179540_pass.fastq.gz PC3_Hypoxia_S1.fastq.gz
 mv SRR7179541_pass.fastq.gz PC3_Hypoxia_S2.fastq.gz
 ```
-<img width="1370" height="84" alt="Screenshot 2025-10-22 172504" src="https://github.com/user-attachments/assets/3f8bef29-f125-425d-8c67-70c329de2d0d" />
+<img width="685" height="42" alt="Screenshot 2025-10-22 172504" src="https://github.com/user-attachments/assets/3f8bef29-f125-425d-8c67-70c329de2d0d" />
 
 5️⃣ Reference Genome & Annotation
 
