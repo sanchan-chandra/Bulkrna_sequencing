@@ -22,7 +22,8 @@ For each cell line, we compared **Normoxia vs Hypoxia** to identify genes that r
 ## 🧬💻 Step-by-step guide with code
 ### 1️⃣ Data Acquisition  
 1.Download .sra files using SRA Toolkit   
-2.Convert .sra → .fastq.gz using fastq-dump   
+2.Convert .sra → .fastq.gz using fastq-dump 
+(Optional) Automate multiple downloads with a Python script
 ```
 # Download SRA
 prefetch SRR7179504
@@ -31,6 +32,7 @@ prefetch SRR7179504
 fastq-dump --outdir fastq --gzip --skip-technical --readids \
 --read-filter pass --dumpbase --split-3 --clip SRR7179504/SRR7179504.sra
 ```
+Output: FASTQ files (raw sequencing reads)
 <img width="600" height="120" alt="Screenshot 2025-10-22 171653" src="https://github.com/user-attachments/assets/b57e5476-e08a-4490-bd7d-37efc96a7e4f" />
 
 ### 2️⃣ Quality Control (QC)
@@ -41,6 +43,7 @@ Check sequencing quality using FastQC and summarize with MultiQC:
 mkdir -p fastqc_results
 fastqc fastq/*.fastq.gz -o fastqc_results/ --threads 8
 ```
+Output: HTML reports showing sequencing quality  
 <img width="600" height="200" alt="Screenshot 2025-10-22 172214" src="https://github.com/user-attachments/assets/7e18d07c-7630-441f-9b1e-082062eef1f0" />
 
 ```
@@ -70,6 +73,7 @@ mv SRR7179537_pass.fastq.gz PC3_Normoxia_S2.fastq.gz
 mv SRR7179540_pass.fastq.gz PC3_Hypoxia_S1.fastq.gz
 mv SRR7179541_pass.fastq.gz PC3_Hypoxia_S2.fastq.gz
 ```
+Output: 8 final FASTQ files (one per replicate)  
 <img width="685" height="42" alt="Screenshot 2025-10-22 172504" src="https://github.com/user-attachments/assets/3f8bef29-f125-425d-8c67-70c329de2d0d" />
 
 ### 5️⃣ Reference Genome & Annotation
@@ -94,6 +98,7 @@ hisat2 -q -x grch38/genome -U fastq/LNCAP_Hypoxia_S1.fastq.gz | \
 
 samtools index alignedreads/LNCAP_Hypoxia_S1.bam
 ```
+Output: Aligned, sorted, and indexed BAM files
 <img width="600" height="108" alt="Screenshot 2025-10-22 172623" src="https://github.com/user-attachments/assets/9371ba06-9adc-4359-a108-e1ad8fbc3edd" />
 
 ### 7️⃣ Quantification (featureCounts)
