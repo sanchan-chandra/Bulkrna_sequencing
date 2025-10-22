@@ -1,32 +1,26 @@
 # Bulk RNA-Seq Analysis – Hypoxia Response in LNCaP and PC3 Cell Lines
 
-🎯 Project Overview
-This project demonstrates a complete Bulk RNA-Seq analysis workflow, from raw sequencing data to identification of differentially expressed genes (DEGs).
+🎯 **Project Overview**
+This project demonstrates a complete Bulk RNA-Seq workflow, from raw sequencing data to identifying differentially expressed genes (DEGs).
 
-We studied the effect of hypoxia on gene expression in two prostate cancer cell lines: LNCaP, derived from a lymph node metastasis, and PC3, derived from a bone metastasis.
-For each cell line, we compared gene expression between Normoxia and Hypoxia conditions to identify genes that respond to low oxygen levels.
+We analyzed the effect of **hypoxia** on gene expression in two prostate cancer cell lines:
 
-⚙️ Workflow Overview
+* **LNCaP** – derived from a lymph node metastasis
+* **PC3** – derived from a bone metastasis
 
--The workflow consists of the following major steps:
--Download raw data from NCBI SRA
--Convert SRA → FASTQ 
--Quality control with FastQC
--Read trimming/filtering (optional)
--Align reads to reference genome (using HISAT2)
--Quantify gene expression (featureCounts)
--Merge counts into a counts matrix
--Differential expression analysis using DESeq2
--Visualization and interpretation (PCA, heatmaps, volcano plots)
+For each cell line, we compared **Normoxia vs Hypoxia** to identify genes that respond to low oxygen levels.
 
-📂 Dataset Information
+📂 **Dataset Information**
 
-GEO Accession: GSE106305
-Citation: Guo H, Ci X, Ahmed M, Hua JT et al. ONECUT2 is a driver of neuroendocrine prostate cancer. Nat Commun 2019 Jan 17;10(1):278. PMID: 30655535  
-Description: RNA-Seq and ChIP-Seq experiments in LNCaP and PC3 cells under normoxia and hypoxia conditions.  
-Note: Each biological sample is split into multiple technical runs (SRR IDs). We merged 20 SRR files into 8 final FASTQ files for analysis.  
+* **GEO Accession:** GSE106305
+* **Citation:** Guo H, Ci X, Ahmed M, Hua JT et al. ONECUT2 is a driver of neuroendocrine prostate cancer. Nat Commun 2019 Jan 17;10(1):278. PMID: 30655535
+* **Description:** RNA-Seq and ChIP-Seq experiments in LNCaP and PC3 cells under normoxia and hypoxia conditions.
+* **Note:** Each biological sample is split across multiple technical runs (SRR IDs). In this analysis, 20 SRR files were merged into 8 final FASTQ files.
 
-🧬💻 Step-by-step guide with code
+---
+
+
+## 🧬💻 Step-by-step guide with code
 1️⃣ Data Acquisition
 1.Download .sra files using SRA Toolkit
 2.Convert .sra → .fastq.gz using fastq-dump
