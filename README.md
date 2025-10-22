@@ -98,7 +98,7 @@ hisat2 -q -x grch38/genome -U fastq/LNCAP_Hypoxia_S1.fastq.gz | \
 
 samtools index alignedreads/LNCAP_Hypoxia_S1.bam
 ```
-Output: Aligned, sorted, and indexed BAM files
+Output: Aligned, sorted, and indexed BAM files  
 <img width="600" height="108" alt="Screenshot 2025-10-22 172623" src="https://github.com/user-attachments/assets/9371ba06-9adc-4359-a108-e1ad8fbc3edd" />
 
 ### 7️⃣ Quantification (featureCounts)
@@ -115,6 +115,7 @@ qualimap rnaseq -bam alignedreads/LNCAP_Hypoxia_S1.bam \
   -gtf Homo_sapiens.GRCh38.114.gtf \
   -outdir rnaseq_qc_results --java-mem-size=8G
 ```
+Output: QC reports for aligned reads  
 <img width="1466" height="85" alt="Screenshot 2025-10-22 172818" src="https://github.com/user-attachments/assets/7a3c4c4e-de55-4e43-a339-fd8a49ffa670" />
 
 9️⃣ Differential Expression Analysis (DESeq2)  
