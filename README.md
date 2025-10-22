@@ -181,7 +181,7 @@ Expected output:
 
 ---
 
-###  Create DESeq2 object
+Create DESeq2 object
 
 ```r
 library(DESeq2)
@@ -193,7 +193,7 @@ dds <- DESeqDataSetFromMatrix(countData = data,
 
 ---
 
-###  Run differential expression analysis
+Run differential expression analysis
 
 ```r
 dds <- DESeq(dds)
@@ -206,8 +206,7 @@ The function performs:
 * Negative binomial GLM fitting and Wald statistics
 
 ---
-
-###  Inspect the DESeq2 object
+Inspect the DESeq2 object
 
 ```r
 ddS
@@ -220,7 +219,7 @@ Expected output includes:
 
 ---
 
-### Extract raw and normalized counts
+Extract raw and normalized counts
 
 ```r
 # Raw counts
@@ -233,7 +232,7 @@ head(normalized_counts)
 
 ---
 
-### Save normalized counts (optional)
+Save normalized counts (optional)
 
 ```r
 write.csv(normalized_counts, "normalized_counts.csv", row.names = TRUE)
@@ -244,7 +243,7 @@ This CSV can be used for downstream analysis, visualization, or sharing with col
 
 
 ## 3.🧩 Gene Annotation
-###   🔧 Download Gene Annotations from Ensembl BioMart  
+  🔧 Download Gene Annotations from Ensembl BioMart  
 1. Go to [Ensembl BioMart](http://uswest.ensembl.org/biomart/martview/).  
 2. Select **Database:** Ensembl Genes 99, **Dataset:** Human genes (GRCh38.p13).  
 3. Under **Attributes → Gene**, select:  
@@ -279,7 +278,7 @@ write.csv(annotated_data, "gene_annotated_normalized_counts.csv", row.names = FA
 
 We assess sample-to-sample variability to identify outliers and check experiment quality.
 
-### **1. Variance Stabilizing Transformation**
+ **1. Variance Stabilizing Transformation**  
 
 ```r
 library(DESeq2)
@@ -290,7 +289,7 @@ vsd <- vst(dds, blind = TRUE)
 
 ---
 
-### **2. Distance Plot**
+**2. Distance Plot**  
 ```
 library(pheatmap)
 library(RColorBrewer)
@@ -315,7 +314,7 @@ plotDists(vsd, "/home/sanchan_chandrasheka/bulkrnaseq_analysis/deseq2_results/Di
 
 
 
-### **3. Variable Genes Heatmap**
+**3. Variable Genes Heatmap**  
 
 ```r
 library(pheatmap)
@@ -346,7 +345,7 @@ dev.off()
 
 ---
 
-### **4. PCA Plot**
+**4. PCA Plot**  
 
 ```r
 library(ggplot2)
@@ -374,7 +373,7 @@ plot_PCA(vsd, output_file="/home/sanchan_chandrasheka/bulkrnaseq_analysis/deseq2
 > Visualizes sample similarity in 2D; replicates cluster together.
 
 
-##  5. Extract DE results
+5. Extract DE results  
 To extract the differentially expressed genes from the DESeq2 object, we will use the results() function:
 ```
 res <- results(dds, contrast = c("condition", "LNCAP_Hypoxia", "LNCAP_Normoxia"))
