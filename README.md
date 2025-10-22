@@ -1,12 +1,11 @@
 # Bulk RNA-Seq Analysis – Hypoxia Response in LNCaP and PC3 Cell Lines
+
 🎯 Project Overview
-This project demonstrates an end-to-end Bulk RNA-Seq analysis workflow from raw SRA files to differentially expressed genes (DEGs).
-We investigated how hypoxia alters gene expression in two prostate cancer cell lines:
-| Cell Line | Origin                                                                |
-| --------- | --------------------------------------------------------------------- |
-| LNCaP     | Derived from a lymph node metastasis of human prostate adenocarcinoma |
-| PC3       | Derived from a bone metastasis of a grade IV prostate adenocarcinoma  |
-We compared Normoxia vs Hypoxia conditions in each cell line.
+This project demonstrates a complete Bulk RNA-Seq analysis workflow, from raw sequencing data to identification of differentially expressed genes (DEGs).
+
+We studied the effect of hypoxia on gene expression in two prostate cancer cell lines: LNCaP, derived from a lymph node metastasis, and PC3, derived from a bone metastasis.
+
+For each cell line, we compared gene expression between Normoxia and Hypoxia conditions to identify genes that respond to low oxygen levels.
 
 ⚙️ Workflow Overview
 
