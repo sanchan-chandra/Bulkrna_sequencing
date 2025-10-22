@@ -4,7 +4,6 @@
 This project demonstrates a complete Bulk RNA-Seq analysis workflow, from raw sequencing data to identification of differentially expressed genes (DEGs).
 
 We studied the effect of hypoxia on gene expression in two prostate cancer cell lines: LNCaP, derived from a lymph node metastasis, and PC3, derived from a bone metastasis.
-
 For each cell line, we compared gene expression between Normoxia and Hypoxia conditions to identify genes that respond to low oxygen levels.
 
 ⚙️ Workflow Overview
