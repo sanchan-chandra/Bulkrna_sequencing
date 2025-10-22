@@ -118,13 +118,13 @@ qualimap rnaseq -bam alignedreads/LNCAP_Hypoxia_S1.bam \
 Output: QC reports for aligned reads  
 <img width="1466" height="85" alt="Screenshot 2025-10-22 172818" src="https://github.com/user-attachments/assets/7a3c4c4e-de55-4e43-a339-fd8a49ffa670" />
 
-9️⃣ Differential Expression Analysis (DESeq2)  
+### 9️⃣ Differential Expression Analysis (DESeq2)  
  Complete step by step guide is provided below 
  
 
 # 🧬 Bulk RNA-seq Differential Expression Analysis (DESeq2)
 
-A complete workflow for **bulk RNA-seq differential gene expression analysis** using **DESeq2** in R.
+A complete workflow for **bulk RNA-seq differential gene expression analysis** using **DESeq2** 
 ---
 
 ## ⚙️ Installation , Load Data and Packages
