@@ -634,7 +634,6 @@ dev.off()
 
 Overall, this pipeline provides a robust framework for confidently exploring, visualizing, and interpreting bulk RNA-sequencing data.
 
----
 ### 📚 Learning Outcomes
 Learned how to process raw RNA-Seq data step by step
 Understood the importance of QC at every stage
