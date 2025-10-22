@@ -123,9 +123,7 @@ Output: QC reports for aligned reads
  
 
 # 🧬 Bulk RNA-seq Differential Expression Analysis (DESeq2)
-
-A complete workflow for **bulk RNA-seq differential gene expression analysis** using **DESeq2** 
----
+A complete workflow for **bulk RNA-seq differential gene expression analysis** using **DESeq2**   
 
 ## ⚙️ Installation , Load Data and Packages
 
