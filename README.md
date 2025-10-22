@@ -134,20 +134,6 @@ It includes preprocessing, normalization, visualization, and statistical testing
 
 ---
 
-## 📘 Overview
-
-We use the **DESeq2** package to perform:
-
-1. **Size factor normalization**
-2. **Dispersion estimation**
-3. **Negative Binomial GLM model fitting**
-4. **Wald tests** for differential expression
-
-Visual outputs include PCA plots, sample distance heatmaps, and expression plots for genes of interest.
-Gene annotation is performed using **BioMart (GRCh38.p13)**.
-
----
-
 ## ⚙️ Installation
 
 Install all dependencies via Bioconductor and CRAN:
@@ -184,8 +170,11 @@ library(RColorBrewer)
 library(ggrepel)
 
 # Read count matrix
-data <- read.csv("raw_counts.csv", header = TRUE, row.names = "ensembl_id")
+data <- read.csv("/home/sanchan_chandrasheka/bulkrnaseq_analysis/countsmatrix/merged_counts_matrix.csv",
+                 header = TRUE, row.names = "Geneid")
 data <- data[, sort(colnames(data))]
+# View the first few rows
+head(data)
 
 # Define conditions
 condition <- c(rep("LNCAP_Hypoxia", 2), rep("LNCAP_Normoxia", 2),
@@ -193,23 +182,97 @@ condition <- c(rep("LNCAP_Hypoxia", 2), rep("LNCAP_Normoxia", 2),
 my_colData <- as.data.frame(condition)
 rownames(my_colData) <- colnames(data)
 ```
+<img width="797" height="110" alt="Screenshot 2025-10-22 174924" src="https://github.com/user-attachments/assets/d95580cc-4fbd-449c-b9b7-dd06923283e0" />
 
 ---
+We observe that each sample has been sequenced at a different “depth”, in which there are varying numbers of total reads for each sample. For example, PC3_Hypoxia_S2 has only 12 million reads, which is less than 1/3rd of the reads for PC3_Hypoxia_S1. This means that we cannot directly compare the count values between samples without normalizing each column based on its total read count. After the data have been processed using DESeq2, we will have normalized data that we can use to make comparisons.
 
 ### 2️⃣ Create DESeq2 Object and Run Normalization
 
+---
+
+##  Create colData for DESeq2
+
+Define the biological replicates for each condition:
+
 ```r
+# Biological replicates
+condition <- c(rep("LNCAP_Hypoxia", 2), rep("LNCAP_Normoxia", 2),
+               rep("PC3_Hypoxia", 2), rep("PC3_Normoxia", 2))
+
+# Assign sample names (columns of your count matrix)
+my_colData <- data.frame(condition)
+rownames(my_colData) <- colnames(data)
+my_colData
+```
+
+Expected output:
+
+<img width="589" height="290" alt="Screenshot 2025-10-22 175345" src="https://github.com/user-attachments/assets/b2288ff1-cc8c-41a3-92dc-c573232a98ce" />
+
+---
+
+##  Create DESeq2 object
+
+```r
+library(DESeq2)
+
 dds <- DESeqDataSetFromMatrix(countData = data,
                               colData = my_colData,
                               design = ~ condition)
-dds <- DESeq(dds)
-
-# Export normalized counts
-normalized_counts <- counts(dds, normalized = TRUE)
-write.csv(normalized_counts, "normalized_counts.csv")
 ```
 
 ---
+
+##  Run differential expression analysis
+
+```r
+dds <- DESeq(dds)
+```
+
+The function performs:
+
+* Estimation of size factors
+* Estimation of dispersion
+* Negative binomial GLM fitting and Wald statistics
+
+---
+
+##  Inspect the DESeq2 object
+
+```r
+dds
+```
+
+Expected output includes:
+
+<img width="787" height="240" alt="Screenshot 2025-10-22 175640" src="https://github.com/user-attachments/assets/d03c38d6-426a-422d-991b-d6efc6a3be67" />
+
+
+---
+
+## Extract raw and normalized counts
+
+```r
+# Raw counts
+head(dds@assays@data$counts)
+
+# Normalized counts
+normalized_counts <- counts(dds, normalized = TRUE)
+head(normalized_counts)
+```
+
+---
+
+## Step 10: Save normalized counts (optional)
+
+```r
+write.csv(normalized_counts, "normalized_counts.csv", row.names = TRUE)
+```
+
+This CSV can be used for downstream analysis, visualization, or sharing with collaborators.
+
+
 
 ## 🧩 Gene Annotation
 
@@ -232,123 +295,91 @@ write.csv(annotated_data, "gene_annotated_normalized_counts.csv")
 ```
 
 ---
+Here’s a **concise version** of your visualization section for GitHub, with short explanations and code blocks:
 
-## 🎨 Visualization (Auto PNG Saving)
+---
 
-### 🔹 1. Variance Stabilizing Transformation
+## **Visualizing Sample Variability** 📊
+
+We assess sample-to-sample variability to identify outliers and check experiment quality.
+
+### **1. Variance Stabilizing Transformation**
 
 ```r
+library(DESeq2)
 vsd <- vst(dds, blind = TRUE)
 ```
 
+> Stabilizes variance across mean expression levels.
+
 ---
 
-### 🔹 2. Sample Distance Heatmap (Saved as PNG)
+### **2. Distance Plot**
 
 ```r
-plotDistsToFile <- function(vsd.obj, filename = "sample_distance_heatmap.png") {
+library(pheatmap)
+plotDists <- function(vsd.obj){
   sampleDists <- dist(t(assay(vsd.obj)))
   sampleDistMatrix <- as.matrix(sampleDists)
   rownames(sampleDistMatrix) <- vsd.obj$condition
-  colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
-  png(filename, width = 1200, height = 1000, res = 150)
-  pheatmap(sampleDistMatrix,
-           clustering_distance_rows = sampleDists,
-           clustering_distance_cols = sampleDists,
-           col = colors,
-           main = "Sample-to-Sample Distance Heatmap",
-           fontsize = 12)
-  dev.off()
+  colors <- colorRampPalette(rev(RColorBrewer::brewer.pal(9, "Blues")))(255)
+  pheatmap(sampleDistMatrix, clustering_distance_rows=sampleDists,
+           clustering_distance_cols=sampleDists, col=colors)
 }
-plotDistsToFile(vsd)
+plotDists(vsd)
 ```
+
+> Euclidean distance between samples; similar samples cluster together.
 
 ---
 
-### 🔹 3. PCA Plot (Saved as PNG)
+### **3. Variable Genes Heatmap**
 
 ```r
-plotPCAtoFile <- function(vsd.obj, filename = "PCA_plot.png") {
-  pcaData <- plotPCA(vsd.obj, intgroup = "condition", returnData = TRUE)
-  percentVar <- round(100 * attr(pcaData, "percentVar"))
-  p <- ggplot(pcaData, aes(PC1, PC2, color = condition)) +
-    geom_point(size = 4) +
-    ggrepel::geom_text_repel(aes(label = name), size = 3, color = "black") +
-    labs(title = "PCA Plot (by Condition)",
-         x = paste0("PC1: ", percentVar[1], "% variance"),
-         y = paste0("PC2: ", percentVar[2], "% variance")) +
-    theme_bw(base_size = 14)
-  ggsave(filename, plot = p, width = 8, height = 6, dpi = 300)
+library(matrixStats)
+variable_gene_heatmap <- function(vsd.obj, num_genes=500, annotation){
+  counts <- assay(vsd.obj)
+  row_variances <- rowVars(counts)
+  top_genes <- counts[order(row_variances, decreasing=TRUE)[1:num_genes],]
+  top_genes <- top_genes - rowMeans(top_genes)
+  rownames(top_genes) <- annotation$Gene.name[match(rownames(top_genes), annotation$Gene.stable.ID)]
+  coldata <- as.data.frame(vsd.obj@colData)
+  coldata$sizeFactor <- NULL
+  pheatmap(top_genes, color=colorRampPalette(RColorBrewer::brewer.pal(11,"RdBu"))(256)[256:1],
+           annotation_col=coldata, fontsize_row=250/num_genes, fontsize_col=8, border_color=NA)
 }
-plotPCAtoFile(vsd)
+variable_gene_heatmap(vsd, num_genes=40, annotation=annotation)
 ```
+
+> Shows top variable genes driving sample clustering.
 
 ---
 
-### 🔹 4. Expression Plot for a Specific Gene (Saved as PNG)
+### **4. PCA Plot**
 
 ```r
-plot_counts_toFile <- function(dds.obj, gene_id, filename = paste0(gene_id, "_expression.png")) {
-  p <- plotCounts(dds.obj, gene = gene_id, intgroup = "condition", returnData = TRUE)
-  g <- ggplot(p, aes(x = condition, y = count, color = condition)) +
-    geom_boxplot(outlier.shape = NA, alpha = 0.4) +
-    geom_jitter(width = 0.2, size = 3) +
-    scale_y_log10() +
-    labs(title = paste("Normalized Expression:", gene_id),
-         y = "log10(Count)",
-         x = "") +
-    theme_bw(base_size = 14)
-  ggsave(filename, plot = g, width = 7, height = 5, dpi = 300)
+library(ggplot2); library(ggrepel)
+plot_PCA <- function(vsd.obj){
+  pcaData <- plotPCA(vsd.obj, intgroup="condition", returnData=TRUE)
+  percentVar <- round(100*attr(pcaData,"percentVar"))
+  ggplot(pcaData, aes(PC1, PC2, color=condition)) +
+    geom_point(size=3) +
+    labs(x=paste0("PC1: ",percentVar[1],"% variance"),
+         y=paste0("PC2: ",percentVar[2],"% variance"),
+         title="PCA Plot by condition") +
+    ggrepel::geom_text_repel(aes(label=name))
 }
-
-# Example: Plot for IGFBP1
-plot_counts_toFile(dds, "IGFBP1")
+plot_PCA(vsd)
 ```
 
----
-
-## 🧠 Differential Expression
-
-You can easily generate DE results and filter by significance:
-
-```r
-res <- results(dds, contrast = c("condition", "LNCAP_Hypoxia", "LNCAP_Normoxia"))
-res <- lfcShrink(dds, contrast = c("condition", "LNCAP_Hypoxia", "LNCAP_Normoxia"), type = "apeglm")
-
-# Save results
-write.csv(as.data.frame(res), "LNCAP_DESeq2_results.csv")
-```
-
-To apply cutoffs:
-
-```r
-sig_res <- subset(res, padj < 0.05 & abs(log2FoldChange) > 1)
-write.csv(as.data.frame(sig_res), "LNCAP_significant_genes.csv")
-```
+> Visualizes sample similarity in 2D; replicates cluster together.
 
 ---
 
-## 📁 Output Files
+This is **compact, readable, and ready to paste** into your GitHub README.
 
-| Output File                            | Description                       |
-| -------------------------------------- | --------------------------------- |
-| `normalized_counts.csv`                | Normalized count data             |
-| `gene_annotated_normalized_counts.csv` | Annotated counts                  |
-| `sample_distance_heatmap.png`          | Sample-to-sample distance heatmap |
-| `PCA_plot.png`                         | PCA plot                          |
-| `*_expression.png`                     | Gene expression plot              |
-| `*_DESeq2_results.csv`                 | All DE results                    |
-| `*_significant_genes.csv`              | Significant DE genes              |
+If you want, I can also make a **version with emojis for each step** to make it visually appealing on GitHub. Do you want me to do that?
 
----
-
-## 🧪 Example Dataset
-
-* **Cell lines:** LNCaP and PC3
-* **Conditions:** Normoxia vs Hypoxia
-* **Goal:** Identify hypoxia-responsive genes and pathway changes across cell types.
-
----
 
 ## 📚 References
 
