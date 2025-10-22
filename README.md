@@ -24,9 +24,11 @@ We compared Normoxia vs Hypoxia conditions in each cell line.
 📂 Dataset Information
 
 GEO Accession: GSE106305
-Citation: Guo H, Ci X, Ahmed M, Hua JT et al. ONECUT2 is a driver of neuroendocrine prostate cancer. Nat Commun 2019 Jan 17;10(1):278. PMID: 30655535
-Description: RNA-Seq and ChIP-Seq experiments in LNCaP and PC3 cells under normoxia and hypoxia conditions.
-Note: Each biological sample is split into multiple technical runs (SRR IDs). We merged 20 SRR files into 8 final FASTQ files for analysis.
+Citation: Guo H, Ci X, Ahmed M, Hua JT et al. ONECUT2 is a driver of neuroendocrine prostate cancer. Nat Commun 2019 Jan 17;10(1):278. PMID: 30655535  
+
+Description: RNA-Seq and ChIP-Seq experiments in LNCaP and PC3 cells under normoxia and hypoxia conditions.  
+
+Note: Each biological sample is split into multiple technical runs (SRR IDs). We merged 20 SRR files into 8 final FASTQ files for analysis.  
 
 🧬💻 Step-by-step guide with code
 1️⃣ Data Acquisition
